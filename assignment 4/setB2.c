@@ -3,7 +3,7 @@
 
 struct NODE{
 	int data;
-	struct NODE *next;
+	struct NODE *next, *prev;
 };
 typedef struct NODE node;
 
@@ -13,6 +13,7 @@ node *getnode(){
 	printf("Enter data:- ");
 	scanf("%d",&temp->data);
 	temp->next = NULL;
+	temp->prev = NULL;
 	return temp;
 }
 
@@ -26,6 +27,7 @@ node *create(node *list){
 		else{
 			for(last = list; last->next != NULL; last = last->next);
 			last->next = temp;
+			temp->prev = last;
 		}
 		printf("Do you want to add more nodes:- ");
 		scanf(" %c",&ch);
@@ -39,6 +41,8 @@ void insertVal(node *list, int val){
 	if(ptr != NULL){
 		temp = getnode();
 		temp->next = ptr->next;
+		temp->prev = ptr;
+		ptr->next->prev = temp;
 		ptr->next = temp;
 	}
 	else{
@@ -47,13 +51,17 @@ void insertVal(node *list, int val){
 }
 
 void deleteVal(node *list, int val){
-	node *temp, *ptr, *pre;
-	for(ptr = list, pre = list; ptr != NULL && ptr->data != val; pre = ptr, ptr = ptr->next);
-	if(ptr != NULL){
-		if(ptr == list && pre == list)
+	node *temp, *ptr;
+	for(ptr = list; ptr != NULL && ptr->data != val; ptr = ptr->next);
+	if(ptr->data == val){
+		if(ptr == list){
 			list = ptr->next;
-		else
-			pre->next = ptr->next;
+			ptr->next->prev = list;
+		}
+		else{
+			ptr->prev->next = ptr->next;
+			ptr->next->prev = ptr->prev;
+		}
 		free(ptr);
 	}
 	else{

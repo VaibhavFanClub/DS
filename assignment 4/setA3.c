@@ -21,11 +21,14 @@ node *create(node *list){
 	char ch;
 	do{
 		temp = getnode();
-		if(list == NULL)
+		if(list == NULL){
 			list = temp;
+			temp->next = list;
+		}
 		else{
-			for(last = list; last->next != NULL; last = last->next);
+			for(last = list; last->next != list; last = last->next);
 			last->next = temp;
+			temp->next = list;
 		}
 		printf("Do you want to add more nodes:- ");
 		scanf(" %c",&ch);
@@ -33,38 +36,30 @@ node *create(node *list){
 	return list;
 }
 
-void insertVal(node *list, int val){
-	node *temp, *ptr;
-	for(ptr = list; ptr != NULL && ptr->data != val; ptr = ptr->next);
-	if(ptr != NULL){
-		temp = getnode();
-		temp->next = ptr->next;
-		ptr->next = temp;
+void search(node *list, int val){
+	node *ptr;
+	int pos;
+	for(ptr = list, pos=1; ptr->next != list && ptr->data != val; pos++, ptr = ptr->next);
+	if(ptr->data == val){
+		printf("Value found at pos %d\n",pos);
 	}
 	else{
 		printf("Value not found\n");
 	}
 }
 
-void deleteVal(node *list, int val){
-	node *temp, *ptr, *pre;
-	for(ptr = list, pre = list; ptr != NULL && ptr->data != val; pre = ptr, ptr = ptr->next);
-	if(ptr != NULL){
-		if(ptr == list && pre == list)
-			list = ptr->next;
-		else
-			pre->next = ptr->next;
-		free(ptr);
-	}
-	else{
-		printf("Value not found\n");
-	}
+void length(node *list){
+	node *ptr;
+	int cnt;
+	for(ptr = list, cnt=1; ptr->next != list; cnt++, ptr = ptr->next);
+	printf("Length of ll is %d\n",cnt);
 }
 
 void display(node *list){
 	node *ptr;
-	for(ptr = list; ptr != NULL; ptr = ptr->next)
+	for(ptr = list; ptr->next != list; ptr = ptr->next)
 		printf("%d ", ptr->data);
+	printf("%d ", ptr->data);
 }
 
 void main(){
@@ -74,8 +69,8 @@ void main(){
 		printf("!!!! MENU !!!!\n");
 		printf("1. Create\n");
 		printf("2. Display\n");
-		printf("3. Insert\n");
-		printf("4. Delete\n");
+		printf("3. Search\n");
+		printf("4. Length\n");
 		printf("5. Exit\n\n");
 		printf("Enter your choice (1/2/3/4/5):- ");
 		scanf("%d",&choice);
@@ -87,14 +82,12 @@ void main(){
 						display(list);
 						printf("\n\n");
 						break;
-			case 3:	printf("Enter val where to insert:- ");
+			case 3:	printf("Enter value to search:- ");
 						scanf("%d",&val);
-						insertVal(list, val);
+						search(list, val);
 						printf("\n\n");
 						break;
-			case 4:	printf("Enter val to delete:- ");
-						scanf("%d",&val);
-						deleteVal(list, val);
+			case 4:	length(list);
 						printf("\n\n");
 						break;
 			case 5: 	exit(0);
